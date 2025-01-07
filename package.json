@@ -1,0 +1,24 @@
+{
+  "name": "backend-error-handler",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+   "types": "dist/index.d.ts",
+   "files": [
+    "dist/**/*"
+   ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/winston": "^2.4.4"
+  },
+  "dependencies": {
+    "winston": "^3.17.0"
+  }
+}
