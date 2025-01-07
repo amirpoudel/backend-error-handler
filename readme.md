@@ -8,7 +8,7 @@ This documentation provides an overview of the error-handling mechanisms impleme
 
 ### 1. `ApiResponse` Class
 
-The `ApiResponse` class standardizes the format of all responses sent to the client, whether successful or containing errors.
+The `ApiResponse` class standardizes the format of all responses sent to the client.
 
 #### Example Usage:
 
@@ -18,6 +18,8 @@ For successful responses:
 return res.status(200).json(new ApiResponse(200, response, "User Create Successful"));
 ```
 
+---
+
 ### 2. `asyncHandler` Function
 
 The `asyncHandler` function wraps Express.js controller functions, allowing asynchronous errors to be caught and passed to the global error handler without explicitly using `try-catch` blocks in every controller.
@@ -25,7 +27,7 @@ The `asyncHandler` function wraps Express.js controller functions, allowing asyn
 #### Example Usage:
 
 ```typescript
-import { asyncHandler } from "../error/asyncHandler";
+import { asyncHandler } from "backend-error-handler";
 
 const createUser = asyncHandler(async (req: Request, res: Response) => {
     const data = req.body.data;
@@ -47,6 +49,8 @@ The `expressErrorHandler` function is the global error handler. It ensures that 
 #### Global Middleware Setup:
 
 ```typescript
+import { expressErrorHandler } from "backend-error-handler";
+
 // Global error handler
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
     expressErrorHandler(err, req, res, next);
@@ -78,15 +82,24 @@ The `AppError` class provides a structured way to define and throw custom applic
 #### Example Usage:
 
 ```typescript
-import { AppError } from "../error/app.error";
+import { AppError } from "backend-error-handler";
 
-// Throwing a custom error
-throw new AppError.validationError("Invalid input data", { field: "email" });
+// Throwing validation errors
+throw AppError.zodError("Custom Message",error);
 
-// Handling a specific error type
-if (error instanceof AppError) {
-    console.log("Handled AppError: ", error.message);
-}
+// Throwing MongoDB-specific errors
+throw AppError.mongoError("Custom Message", error);
+
+// Throwing Prisma-specific errors
+throw AppError.prismaError("Custom Message", error);
+
+// Throwing other types of errors - just pass the message 
+throw AppError.badRequest("Invalid request data");
+throw AppError.conflict("Resource already exists");
+throw AppError.internalServerError("Something went wrong");
+throw AppError.notFound("Resource not found");
+throw AppError.unauthorized("Access denied");
+throw AppError.forbidden("Action forbidden");
 ```
 
 ---
@@ -97,65 +110,55 @@ The `trycatchWrapper` family of functions simplifies error handling in different
 
 #### Example Usage:
 
-- **Generic Wrapper:**
+**Standard Wrapper:**
 
-  Use for general purposes where no specific error type is required.
+```typescript
+import { trycatchWrapper } from "backend-error-handler";
 
-  ```typescript
-  const wrappedFunction = trycatchWrapper(async () => {
-      // Business logic here
-  });
-  ```
+const fetchData = trycatchWrapper(async () => {
+    // Your logic here
+});
+```
 
-- **MongoDB Wrapper:**
+**MongoDB-Specific Wrapper:**
 
-  Automatically wraps and handles MongoDB-specific errors.
+```typescript
+import { trycatchWrapperMongo } from "backend-error-handler";
 
-  ```typescript
-  const wrappedMongoFunction = trycatchWrapperMongo(async () => {
-      // MongoDB logic here
-  });
-  ```
+const fetchMongoData = trycatchWrapperMongo(async () => {
+    // Your MongoDB query here
+});
+```
 
-- **Prisma Wrapper:**
+**Prisma-Specific Wrapper:**
 
-  Automatically wraps and handles Prisma-specific errors.
+```typescript
+import { trycatchWrapperPrisma } from "backend-error-handler";
 
-  ```typescript
-  const wrappedPrismaFunction = trycatchWrapperPrisma(async () => {
-      // Prisma logic here
-  });
-  ```
-
----
-
-## Benefits
-
-1. **Consistency:** All errors are formatted and sent in a standardized structure.
-2. **Efficiency:** Reduces boilerplate `try-catch` blocks in controllers and service layers.
-3. **Flexibility:** Custom `AppError` classes support diverse error types.
-4. **Scalability:** Wrapper functions allow easy integration with various data sources (e.g., MongoDB, Prisma).
+const fetchPrismaData = trycatchWrapperPrisma(async () => {
+    // Your Prisma query here
+});
+```
 
 ---
 
-## Summary of Implementation Steps
+## Installation
 
-1. **Setup the `ApiResponse` class** for standardized success and error responses.
-2. **Use the `asyncHandler` wrapper** for all Express.js controllers.
-3. **Define the `AppError` class** to handle custom errors.
-4. **Implement the `trycatchWrapper` utility functions** for different layers (repository, service).
-5. **Configure the `expressErrorHandler`** as the global error middleware in `app.ts`/`app.js`.
+Install the package via npm:
 
----
-
-## Example Application Flow
-
-1. A controller function is wrapped with `asyncHandler`.
-2. Errors thrown in the controller are automatically passed to the `expressErrorHandler`.
-3. Service/repository layers use `trycatchWrapper` to handle errors and rethrow as `AppError` instances.
-4. The `expressErrorHandler` sends a formatted response to the client.
+```bash
+npm install backend-error-handler
+```
 
 ---
 
-This package streamlines error management in the backend, ensuring reliability and simplicity across all layers of the application.
+## Conclusion
+
+By using the `backend-error-handler` package, you can:
+
+- Simplify error handling in controllers and services.
+- Ensure consistent error and success response formats.
+- Reduce boilerplate `try-catch` blocks.
+
+For additional questions or support, please refer to the package documentation or reach out to me -> [amirpoudeldev@gmail.com](https://www.linkedin.com/) .
 
