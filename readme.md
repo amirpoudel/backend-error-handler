@@ -160,5 +160,5 @@ By using the `backend-error-handler` package, you can:
 - Ensure consistent error and success response formats.
 - Reduce boilerplate `try-catch` blocks.
 
-For additional questions or support, please refer to the package documentation or reach out to me -> [amirpoudeldev@gmail.com](https://www.linkedin.com/) .
+For additional questions or support, please refer to the package documentation or reach out to me -> [amirpoudel](https://www.linkedin.com/in/amirpoudel/) .
 
